@@ -55,11 +55,13 @@ be found [here](http://www.povertytools.org/countries/Ghana/PAT%20Ghana%20User%2
 Attached is a helpers.R file where I will put helper functions that don't contribute 
 to the story but is needed for having a generic pipeline
 
+`r source('helpers.R')`
+
 
 ## Welcome, Data
 
 Make sure you have the packages needed. to install all the packages run
-`install.packages(c('foreign', 'ggplot2', 'scales', 'caTools', 'caret', 'e1071', 'ROCR', 'reshape', 'randomForest', 'rpart'))`
+`install.packages(c('foreign', 'ggplot2', 'scales', 'caTools', 'caret', 'e1071', 'ROCR', 'reshape', 'randomForest', 'rpart', 'mice', 'plyr', 'kernlab'))`
 
 First we need to read the data
 
@@ -183,10 +185,10 @@ the household and the house roster are still identifiable.
 So Let's label the poor then.
 
 ```{r label_poor}
-household$poor = household$XPOV < 3.5
+household$poor = factor(household$XPOV < 3.5)
 # for households levels
 table(household$poor)
-sum(household$poor, na.rm=T) / nrow(household)
+sum(household$poor == TRUE, na.rm=T) / nrow(household)
 ```
 
 Whoops, let's keep in mind that we are dealing with two levels here. The household level
@@ -196,7 +198,7 @@ in the poor household. This can be done as follows.
 
 ```{r indvidual_level}
 # for individuals levels
-sum(household$poor * household$HHSIZE, na.rm=T) / sum(household$HHSIZE)
+sum(household$poor == T * household$HHSIZE, na.rm=T) / sum(household$HHSIZE)
 ```
 
 Ouch, 65% of the headcount are poor. (won't go through it in the report). I 
@@ -205,11 +207,11 @@ won't go through this in the report. It was `1.35` (moving the poverty line from
 2$ to 2.7$). Let's label again and check this
 
 ```{r label_poor2}
-household$poor = household$XPOV < 2.7
+household$poor = factor(household$XPOV < 2.7)
 # for households levels
 table(household$poor)
-sum(household$poor, na.rm=T) / nrow(household)
-sum(household$poor * household$HHSIZE, na.rm=T) / sum(household$HHSIZE)
+sum(household$poor == T, na.rm=T) / nrow(household)
+sum(household$poor == T * household$HHSIZE, na.rm=T) / sum(household$HHSIZE)
 ```
 This means that 51% of the population is poor and this 51% lives in 38% of the households.
 
@@ -262,22 +264,22 @@ We'll use a couple of libraries for each step. First let's divide the data and m
 a naive model and then print some info about our model.
 ```{r sampling}
 library(caTools) # for sampling
-set.seed(3000) # to ensure consistent runs
-split = sample.split(household$poor, SplitRatio=0.7) 
+set.seed(2000) # to ensure consistent runs
+split = sample.split(household$poor, SplitRatio=0.7)
 
 train.household = subset(household, split)
 test.household = subset(household, !split)
 
 # you can use '.' to refer to all variable or . - VAR1 - VAR2 to exclude some variables
-logit1 = glm(poor ~ TV + TOILET, data=household, family=binomial) 
+logit1 = glm(poor ~ TV + TOILET, data=train.household, family=binomial)
 summary(logit1)
 ```
 
 Now let's test our model via the `test.household`
 
 ```{r testing}
-poor.prediction = predict(logit1, newdata=test.household, type="response")
-head(poor.prediction)
+logit1.poor.prediction = predict(logit1, newdata=test.household, type="response")
+head(logit1.poor.prediction)
 ```
 Now we must choose a threshold to label our predicted value as poor or not. (We'll do it roughly now, then 
 use a better analysis later).
@@ -285,27 +287,24 @@ use a better analysis later).
 Let's build the diffusion matrix with a threshold of 0.5
 
 ```{r confusion_matrix}
-table(test.household$poor, poor.prediction > 0.5)
-
-# Let's put some labels
-table(factor(test.household$poor, labels=c('NO_POOR', 'POOR')),
-      factor(poor.prediction > 0.5, labels=c('MODEL_NOPOOR', 'MODEL_POOR')))
+table(prediction=logit1.poor.prediction > 0.5, reference = test.household$poor)
 
 # or you can use the more polished way of confusionMatrix in caret library
 
 library(caret)
 library(e1071)
 
-confusionMatrix(poor.prediction > 0.5, test.household$poor)
+confusionMatrix(logit1.poor.prediction > 0.5, test.household$poor)
 ```
 
-So right now we're using an arbitrary threshold of 0.5. Let's use the ROC curve
+So right now we're using an arbitrary threshold of 0.5. Let's use the ROC curve 
+to choose a better value
 
 
 ```{r roc_curve, fig.width=12}
 library(ROCR)
 
-logit1.ROCRpred = prediction(poor.prediction, test.household$poor) # prediction object
+logit1.ROCRpred = prediction(logit1.poor.prediction, test.household$poor) # prediction object
 
 perf = performance(logit1.ROCRpred, 'tpr', 'fpr')
 rocplot = function(perf){
@@ -323,18 +322,52 @@ To get the area under the curve we can use as well as other many performance met
 # to get the area under the curve
 as.numeric(performance(logit1.ROCRpred, 'auc')@y.values)
 
-# for the precision and recall
-library(reshape)
-percision = performance(logit1.ROCRpred, 'prec')@y.values[[1]]
-recall =  performance(logit1.ROCRpred, 'rec')@y.values[[1]]
-cutoffs  = performance(logit1.ROCRpred, 'prec')@x.values[[1]]
+# in helpers.R
+drawPrecisionRecall(logit1.ROCRpred)
+```
 
-df = data.frame(cutoff=cutoffs, percision=percision, recall=recall)
-df = melt(df, id='cutoff')
+Let's make a more realistic logistic regression model
 
-# you can use the tpr/fpr style of graph using rocplot(performance(logit1.ROCRpred, 'prec', 'rec'))
-ggplot(df, aes(x=cutoff, color=variable, y=value)) + geom_line() + labs(title="Precision and Recall")
+To compare between logistic models we can use something similar to
 
+```{r model_compare, fig.width=12}
+logit2 = glm(poor ~ WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.household, family=binomial) 
+logit2.poor.prediction = predict(logit2, newdata=test.household, type="response")
+
+logit2.ROCRpred = prediction(logit2.poor.prediction, test.household$poor) # prediction object
+drawPrecisionRecall(logit2.ROCRpred)
+
+confusionMatrix(logit2.poor.prediction > 0.4, test.household$poor)
+
+
+logit1.auc = performance(logit1.ROCRpred, 'auc')
+logit2.auc = performance(logit2.ROCRpred, 'auc')
+logit1.auc@y.values[[1]]
+logit2.auc@y.values[[1]]
+
+logit1.tpr.fpr = performance(logit1.ROCRpred, 'tpr', 'fpr')
+logit2.tpr.fpr = performance(logit2.ROCRpred, 'tpr', 'fpr')
+
+# not the cleanest way, but will make generating graphs for exploring much much better
+df1 = data.frame(logit1.x = logit1.tpr.fpr@x.values[[1]], logit1.y = logit1.tpr.fpr@y.values[[1]])
+df2 = data.frame(logit2.x = logit2.tpr.fpr@x.values[[1]], logit2.y = logit2.tpr.fpr@y.values[[1]])
+ggplot(df1, aes(x = logit1.x, y=logit1.y)) +
+  geom_line() +
+  geom_line(data=df2, aes(logit2.x, logit2.y), color='red') +
+  labs(title="Comparison between logit1 and logit2", x='False Positive Rate', y='True Positive Rate')
+```
+
+The above code is packaged in `compareTwoModels` method in helpers.R, you can call it easily as follows
+
+```{r compareTwoModelsExample, fig.width=12}
+compareTwoModels(logit1, logit2, test.data=test.household, dep.var='poor',
+                 model1.name='logit1', model2.name='logit2')
+```
+logit2 is not performing well against logi1. Let's see what are the significant
+variables in logit2. (note the stars).
+
+```{r sig_vars}
+  summary(logit2)
 ```
 
 
@@ -343,39 +376,93 @@ So let's do one more model, this time we'll use random forests with CV on one co
 ```{r random_forests, fig.width=12}
 library(randomForest)
 # note in randomForests, NA values must be imputed or totally ignored 
-forest1 = randomForest(poor ~ WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.household, nodesize=25, ntree=200)
-# forest1 = train(poor ~ WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.household, method='rf', train.household)
+#forest1 = randomForest(poor ~ HHSEX + HHAGEY + HHMARST + HHEDLEV + HHEMSTAT + HHEMTYPE  + OWNHOUSE+ ROOMS + GARBDISP + TOILET + WALLS +  SEWMACH + STOVE + RADIO + TV + AGLAND +  OTHLNDOW, data=train.household, nodesize=25, ntree=200)
 
-# rf_model<-train(poor ~ TV + TOILET + ROOF,data=training1,method="rf",
-#                 trControl=trainControl(method="cv",number=5),
-#                 prox=TRUE,allowParallel=TRUE)
+forest1 = randomForest(poor ~ WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.household, nodesize=25, ntree=200)
+
+# random forest models output TRUE or FALSE directly for classification. The models
+# knew that it is a classification problem because the column poor is a factor. To
+# Treat as response, make the poor column logical
 
 # The predict function works here as well (there is an alias for each algorithm)
 forest1.poor.prediction = predict(forest1, newdata=test.household)
-forest1.ROCRpred = prediction(forest1.poor.prediction, test.household$poor)
-# We can simply draw and compute everything again for this new model
-rocplot(performance(forest1.ROCRpred, 'tpr', 'fpr'))
+confusionMatrix(forest1.poor.prediction, test.household$poor)
+```
+
+### Merging with Data from Another Table
+
+Because some features that might be useful aren't readily available from the household
+table like the ratio for household resident under a certain age, we will need to aggregate
+this kind of data from the individual data and merge it with the household table to be 
+able to use in our classifiers.
+
+
+
+```{r merging_data}
+library(plyr)
+
+
+all_info = ddply(individuals, .(HID), function(x){ 
+                c(
+                  sum(x$AGEY < 6) / x[1,]$HHSIZE, 
+                  sum(x$AGEY < 6) / x[1,]$HHSIZE, 
+                  sum(x$AGEY < 6) / x[1,]$HHSIZE,
+                  sum(x$SEX == 'Female') / x[1,]$HHSIZE,
+                  sum(x$LITERACY == 'Cannot read or write')
+                )
+                 })
+names(all_info) = c('HID', 'UND6RAT', 'UND15RAT', 'UND21RAT', 'FEMRAT', 'LITRAT')
+extra.household = merge(all_info, household, by='HID')
+```
+
+Let's use the extra info in a forest classifier and compare the two models
+```{r another_forest, fig.width=12}
+train.extra.household = extra.household[split, ]
+test.extra.household = extra.household[!split, ]
+
+forest1 = randomForest(poor ~ WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.extra.household) 
+
+forest2 = randomForest(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.extra.household) 
+logit3 = glm(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.extra.household, family=binomial) 
 
 ```
 
-To compare between models we can use something similar to
+From now on, we will depend on the Balanced Accuracy measure `(Sensitivity+Specificity)/2` to 
+compare between models.
 
-```{r model_compare, fig.width=12}
-logit1.auc = performance(logit1.ROCRpred, 'auc')
-forest1.auc = performance(forest1.ROCRpred, 'auc')
-logit1.auc@y.values[[1]]
-forest1.auc@y.values[[1]]
+### Imputation Example and Dealing with Missing Data
 
-logit1.tpr.fpr = performance(logit1.ROCRpred, 'tpr', 'fpr')
-forest1.tpr.fpr = performance(forest1.ROCRpred, 'tpr', 'fpr')
+Some data is missing, but it is not much, (i investigated quickly offline)
 
-# not the cleanest way, but will make generating graphs for exploring much much better
-df1 = data.frame(logit1.x = logit1.tpr.fpr@x.values[[1]], logit1.y = logit1.tpr.fpr@y.values[[1]])
-df2 = data.frame(forest1.x = forest1.tpr.fpr@x.values[[1]], forest1.y = forest1.tpr.fpr@y.values[[1]])
-ggplot(df1, aes(x = logit1.x, y=logit1.y)) +
-  geom_line() +
-  geom_line(data=df2, aes(forest1.x, forest1.y), color='red') +
-  labs(title="Comparison between logit1 and forest1", x='cutoff', y='value')
+```{r impute, cache=T, message=FALSE}
+library('mice')
+povCols = c('HHSEX', 'HHAGEY', 'HHMARST', 'HHEDLEV', 'HHEMTYPE', 'OWNHOUSE',  'ROOMS', 'GARBDISP', 'TOILET', 'WALLS', 'SEWMACH', 'STOVE', 'RADIO', 'TV', 'AGLAND', 'OTHLNDOW', 'poor')
+
+subset.household = household[, povCols]
+
+subset.train.household  = subset(subset.household, split)
+subset.test.household  = subset(subset.household, !split)
+
+logit4 = glm(poor ~ ., subset.train.household, family=binomial)
+
+# takes a lot of time, not worth it
+imputed.household = complete(mice(household[, povCols]))
+# imputed.household = household
+
+imputed.train.household = subset(imputed.household, split)
+imputed.test.household = subset(imputed.household, !split)
+
+logit4 = glm(poor ~ ., imputed.train.household, family=binomial)
+confusionMatrix(logit4)
+```
+
+#### SVM model
+
+```{r svm_model}
+library(kernlab)
+svm1 = ksvm(poor ~ WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.extra.household)
+svm1.predictions = predict(svm1, test.extra.household)
+confusionMatrix(svm1.predictions, test.extra.household$poor)
 ```
 
 
@@ -395,7 +482,3 @@ cartGrid = expand.grid(.cp=(1:50)*0.01)
 #train(poor ~ WALLS + TOILET + TV, data=train.household, method='rpart', trControl=fitControl, tuneGrid=cartGrid)
 ```
 
-
-## Imputation Example
-
-## Merging with Data from Another Table
