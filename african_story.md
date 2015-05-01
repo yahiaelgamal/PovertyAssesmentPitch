@@ -342,7 +342,7 @@ tv_xpov + scale_x_continuous(limits=c(1,10))
 ```
 
 ```
-## Warning: Removed 1480 rows containing missing values (geom_point).
+## Warning: Removed 1477 rows containing missing values (geom_point).
 ```
 
 ![plot of chunk facet_by_tv_zoom](figure/facet_by_tv_zoom-1.png) 
@@ -853,12 +853,15 @@ imputed.train.household = subset(imputed.household, split)
 imputed.test.household = subset(imputed.household, !split)
 
 logit4 = glm(poor ~ ., imputed.train.household, family=binomial)
-confusionMatrix(logit4)
+logit4.poor.prediction = predict(logit4, imputed.test.household)
+table(prediction=logit4.poor.prediction > 0.4, reference = imputed.test.household$poor)
 ```
 
 ```
-## Error in sort.list(y): 'x' must be atomic for 'sort.list'
-## Have you called 'sort' on a list?
+##           reference
+## prediction FALSE TRUE
+##      FALSE  1493  633
+##      TRUE    123  357
 ```
 
 #### SVM model

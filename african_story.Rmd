@@ -453,7 +453,8 @@ imputed.train.household = subset(imputed.household, split)
 imputed.test.household = subset(imputed.household, !split)
 
 logit4 = glm(poor ~ ., imputed.train.household, family=binomial)
-confusionMatrix(logit4)
+logit4.poor.prediction = predict(logit4, imputed.test.household)
+table(prediction=logit4.poor.prediction > 0.4, reference = imputed.test.household$poor)
 ```
 
 #### SVM model
