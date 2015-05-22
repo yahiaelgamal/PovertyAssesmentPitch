@@ -61,7 +61,7 @@ to the story but is needed for having a generic pipeline
 ## Welcome, Data
 
 Make sure you have the packages needed. to install all the packages run
-`install.packages(c('foreign', 'ggplot2', 'scales', 'caTools', 'caret', 'e1071', 'ROCR', 'reshape', 'randomForest', 'rpart', 'mice', 'plyr', 'kernlab'))`
+`install.packages(c('foreign', 'ggplot2', 'scales', 'caTools', 'caret', 'e1071', 'ROCR', 'reshape', 'randomForest', 'rpart', 'mice', 'plyr', 'kernlab', 'gbm'))`
 
 First we need to read the data
 
@@ -102,6 +102,11 @@ we'll use for labelling the poor in a new colum called  XPOV
 household$INC_TOT_G_PPP_DAILY = household$INC_TOT_G / expenses$PPP2005[1] / 365
 
 household$XPOV = household$INC_TOT_G_PPP_DAILY
+household$INC_TOT_G_PPP_DAILY = household$INC_TOT_G / expenses$PPP2005[1] / 365
+
+household$XPOV = household$INC_TOT_G_PPP_DAILY
+
+
 ```
 
 So let's explore this distribution
@@ -267,6 +272,10 @@ library(caTools) # for sampling
 set.seed(2000) # to ensure consistent runs
 split = sample.split(household$poor, SplitRatio=0.7)
 
+# adding poor factorial
+household$poorfac = factor(household$poor, levels=c('TRUE', 'FALSE'))
+levels(household$poorfac) = c('POOR', 'NOT_POOR')
+
 train.household = subset(household, split)
 test.household = subset(household, !split)
 
@@ -404,14 +413,15 @@ library(plyr)
 
 all_info = ddply(individuals, .(HID), function(x){ 
                 c(
-                  sum(x$AGEY < 6) / x[1,]$HHSIZE, 
-                  sum(x$AGEY < 6) / x[1,]$HHSIZE, 
-                  sum(x$AGEY < 6) / x[1,]$HHSIZE,
-                  sum(x$SEX == 'Female') / x[1,]$HHSIZE,
-                  sum(x$LITERACY == 'Cannot read or write')
+                  sum(x$AGEY < 6) / x[1,]$HHSIZE_S, 
+                  sum(x$AGEY < 15) / x[1,]$HHSIZE_S, 
+                  sum(x$AGEY < 21) / x[1,]$HHSIZE_S,
+                  sum(x$AGEY > 60) / x[1,]$HHSIZE_S,
+                  sum(x$SEX == 'Female') / x[1,]$HHSIZE_S,
+                  sum(x$LITERACY == 'Cannot read or write') / x[1,]$HHSIZE_S
                 )
                  })
-names(all_info) = c('HID', 'UND6RAT', 'UND15RAT', 'UND21RAT', 'FEMRAT', 'LITRAT')
+names(all_info) = c('HID', 'UND6RAT', 'UND15RAT', 'UND21RAT', 'ABV60RAT', 'FEMRAT', 'LITRAT')
 extra.household = merge(all_info, household, by='HID')
 ```
 
@@ -446,8 +456,8 @@ subset.test.household  = subset(subset.household, !split)
 logit4 = glm(poor ~ ., subset.train.household, family=binomial)
 
 # takes a lot of time, not worth it
-imputed.household = complete(mice(household[, povCols]))
-# imputed.household = household
+# imputed.household = complete(mice(household[, povCols]))
+  imputed.household = household
 
 imputed.train.household = subset(imputed.household, split)
 imputed.test.household = subset(imputed.household, !split)
@@ -464,22 +474,137 @@ library(kernlab)
 svm1 = ksvm(poor ~ WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.extra.household)
 svm1.predictions = predict(svm1, test.extra.household)
 confusionMatrix(svm1.predictions, test.extra.household$poor)
+
+svm3 = ksvm(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.extra.household) 
+
+svm3.predictions = predict(svm3, test.extra.household)
+confusionMatrix(svm3.predictions, test.extra.household$poor)
 ```
 
 
-### Cross Validation and tuning Example 
+### Cross Validation and Tuning Example 
+library('gbm')
 In this example we'll make a tree model and tune it using caret library. Caret
 ( Classification and Regression Training) is the gold standard for tuning models
-in R. We'll use a normal tree-based model
+in R. We'll play with a gbm model and an svm model.
 
-```{r tree_based}
-library(rpart)
-```
 
 
 ```{r caret_tuning}
-fitControl = trainControl(method='cv', number=10)
-cartGrid = expand.grid(.cp=(1:50)*0.01)
-#train(poor ~ WALLS + TOILET + TV, data=train.household, method='rpart', trControl=fitControl, tuneGrid=cartGrid)
+# fitControl <- trainControl(## 10-fold CV
+#                            method = "repeatedcv",
+#                            number = 10,
+#                            ## repeated ten times
+#                            repeats = 5)
+# 
+# 
+# gbmFit1 <- train(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF,
+#                  data = train.extra.household,
+#                  method = "gbm",
+#                  trControl = fitControl,
+#                  ## This last option is actually one
+#                  ## for gbm() that passes through
+#                  verbose = FALSE)
+# gbmFit1
+# 
+
+
+# svmFit1 <- train(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF,
+#                  data = train.extra.household,
+#                  method = "svmRadial",
+#                  trControl = fitControl,
+#                  tuneLength = 8)
+# svmFit1
+
+
+# descrimination 
+# rdaFit1 <- train(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF,
+#                  data = train.extra.household,
+#                  method = "rda",
+#                  trControl = fitControl,
+#                  tuneLength = 4,
+#                  metric = "ROC")
+# rdaFit
+# 
+# 
+# 
+# logFit1 <- train(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF,
+#                  data = train.extra.household,
+#                  method = "LogitBoost",
+#                  trControl = fitControl)
+# logFit1
 ```
 
+
+## Feature Analysis and New Models
+Let's analyze a bit how some variables that we choose in our models relate to the
+likelihood of being poor.
+
+```{r feature_analysis, fig.width=12}
+ggplot(extra.household, aes(x=TOILET, fill=poorfac)) + geom_bar(position='fill')
+ggplot(extra.household, aes(x=TV, fill=poorfac)) + geom_bar(position='fill')
+ggplot(extra.household, aes(x=GARBDISP, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Grabage disposal')
+ggplot(extra.household, aes(x=SEWMACH, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Sewing machine')
+ggplot(extra.household, aes(x=WALLS, fill=poorfac)) + geom_bar(position='fill')
+ggplot(extra.household, aes(x=STOVE, fill=poorfac)) + geom_bar(position='fill')
+ggplot(extra.household, aes(x=RADIO, fill=poorfac)) + geom_bar(position='fill')
+```
+There is an obvious relation between these variables and the likelihood of being poor. 
+Let's examine more household related variables
+
+```{r more_features, fig.width=12}
+ggplot(extra.household, aes(x=HHAGEY, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Age')
+ggplot(extra.household, aes(x=HHSEX, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Sex')
+ggplot(extra.household, aes(x=HHMARST, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Martial Status') + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggplot(extra.household, aes(x=HHEDLEV, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Ed level') + scale_x_discrete(labels= c('No Education', 'Pre school', 'Primary', 'Secondary', 'Upper secondary ', 'Post secondary (technical or vocational)', 'University', 'Literacy Program', 'Other', 'NA')) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggplot(extra.household, aes(x=OWNHOUSE, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Is the house owned')
+```
+Something really strange in the OWNHOUSE graph. It is counterintuitive that if you own a house, it's more likely that you 
+are under the poverty line.
+
+Let's examine the relation between the individual information that we extracted before (ratio of children
+and ratio of female, and illiteracy ratio).
+
+```{r individual_data, fig.width=12}
+ggplot(extra.household, aes(x=UND6RAT, fill=poorfac)) + geom_bar(position='fill', binwidth=0.1) + labs(title ='Under 6 ratio') + scale_x_continuous(limits=c(0.0, 1.0))
+ggplot(extra.household, aes(x=UND15RAT, fill=poorfac)) + geom_bar(position='fill', binwidth=0.1) + labs(title = 'Under 15 ratio') + scale_x_continuous(limits=c(0.0, 1.0))
+ggplot(extra.household, aes(x=UND21RAT, fill=poorfac)) + geom_bar(position='fill', binwidth=0.1) + labs(title = 'Under 21 ratio') + scale_x_continuous(limits=c(0.0, 1.0))
+ggplot(extra.household, aes(x=ABV60RAT, fill=poorfac)) + geom_bar(position='fill', binwidth=0.1) + labs(title = 'Above 60 ratio') + scale_x_continuous(limits=c(0.0, 1.0))
+ggplot(extra.household, aes(x=FEMRAT, fill=poorfac)) + geom_bar(position='fill', binwidth=0.1) + labs(title = 'Female  ratio') + scale_x_continuous(limits=c(0.0, 1.0))
+ggplot(extra.household, aes(x=LITRAT, fill=poorfac)) + geom_bar(position='fill', binwidth=0.1) + labs(title = 'Illiteracy ratio') + scale_x_continuous(limits=c(0.0, 1.0))
+```
+
+**Note** Bar lengths are normalized to easily compare ratio. So something like the education level will look like
+this if we ignored normalization. Note that I only delete the `position` argument in the geom_bar 
+
+```{r, fig.width=12}
+ggplot(extra.household, aes(x=HHEDLEV, fill=poorfac)) + geom_bar() + ggtitle('Household Head Ed level') + scale_x_discrete(labels= c('No Education', 'Pre school', 'Primary', 'Secondary', 'Upper secondary ', 'Post secondary (technical or vocational)', 'University', 'Literacy Program', 'Other', 'NA')) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggplot(extra.household, aes(x=LITRAT, fill=poorfac)) + geom_bar(binwidth=0.1) + labs(title = 'Illiteracy ratio') + scale_x_continuous(limits=c(0.0, 1.0))
+```
+
+Let's build model with some of those variables. We'll use caret to do the cross validation and rely 
+on the accuracy metric `1/n(TP + TN)`
+
+```{r models_from_features}
+fitControl <- trainControl(## 10-fold CV
+                           method = "repeatedcv",
+                           number = 10,
+                           ## repeated ten times
+                           repeats = 5)
+
+
+#gbmFit1 <- train(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF,
+gbmFit1 <- train(poor ~ TOILET + TV + GARBDISP + STOVE + HHMARST + HHEDLEV + OWNHOUSE + UND15RAT  + UND21RAT  + FEMRAT +LITRAT,
+                 data = train.extra.household,
+                 method = "gbm",
+                 trControl = fitControl,
+                 ## This last option is actually one
+                 ## for gbm() that passes through
+                 verbose = FALSE)
+gbmFit1
+```
+
+With gradient boosting and without much tuning, we were able to reach 71% accuracy. Comparing this 
+with the performance of other datasets and algorithm here
+
+![alt text](images/perf_other.png)
