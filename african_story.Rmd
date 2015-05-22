@@ -442,7 +442,7 @@ compare between models.
 
 ### Imputation Example and Dealing with Missing Data
 
-Some data is missing, but it is not much, (i investigated quickly offline)
+Some data is missing, but it is not much, (I investigated quickly offline)
 
 ```{r impute, cache=T, message=FALSE}
 library('mice')
@@ -456,8 +456,8 @@ subset.test.household  = subset(subset.household, !split)
 logit4 = glm(poor ~ ., subset.train.household, family=binomial)
 
 # takes a lot of time, not worth it
-# imputed.household = complete(mice(household[, povCols]))
-  imputed.household = household
+imputed.household = complete(mice(household[, povCols]))
+# imputed.household = household
 
 imputed.train.household = subset(imputed.household, split)
 imputed.test.household = subset(imputed.household, !split)

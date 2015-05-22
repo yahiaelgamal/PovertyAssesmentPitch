@@ -806,7 +806,7 @@ compare between models.
 
 ### Imputation Example and Dealing with Missing Data
 
-Some data is missing, but it is not much, (i investigated quickly offline)
+Some data is missing, but it is not much, (I investigated quickly offline)
 
 
 ```r
@@ -821,20 +821,46 @@ subset.test.household  = subset(subset.household, !split)
 logit4 = glm(poor ~ ., subset.train.household, family=binomial)
 
 # takes a lot of time, not worth it
-# imputed.household = complete(mice(household[, povCols]))
-  imputed.household = household
+imputed.household = complete(mice(household[, povCols]))
+```
+
+```
+## 
+##  iter imp variable
+##   1   1  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   1   2  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   1   3  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   1   4  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   1   5  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   2   1  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   2   2  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   2   3  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   2   4  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   2   5  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   3   1  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   3   2  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   3   3  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   3   4  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   3   5  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   4   1  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   4   2  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   4   3  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   4   4  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   4   5  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   5   1  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   5   2  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   5   3  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   5   4  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+##   5   5  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
+```
+
+```r
+# imputed.household = household
 
 imputed.train.household = subset(imputed.household, split)
 imputed.test.household = subset(imputed.household, !split)
 
 logit4 = glm(poor ~ ., imputed.train.household, family=binomial)
-```
-
-```
-## Error in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels
-```
-
-```r
 logit4.poor.prediction = predict(logit4, imputed.test.household)
 table(prediction=logit4.poor.prediction > 0.4, reference = imputed.test.household$poor)
 ```
@@ -842,8 +868,8 @@ table(prediction=logit4.poor.prediction > 0.4, reference = imputed.test.househol
 ```
 ##           reference
 ## prediction FALSE TRUE
-##      FALSE   705  377
-##      TRUE    119  350
+##      FALSE  1496  635
+##      TRUE    120  355
 ```
 
 #### SVM model
@@ -922,25 +948,25 @@ confusionMatrix(svm3.predictions, test.extra.household$poor)
 ## 
 ##           Reference
 ## Prediction FALSE TRUE
-##      FALSE  1402  536
-##      TRUE    214  454
+##      FALSE  1401  537
+##      TRUE    215  453
 ##                                           
-##                Accuracy : 0.7122          
-##                  95% CI : (0.6944, 0.7295)
+##                Accuracy : 0.7114          
+##                  95% CI : (0.6936, 0.7288)
 ##     No Information Rate : 0.6201          
 ##     P-Value [Acc > NIR] : < 2.2e-16       
 ##                                           
-##                   Kappa : 0.3481          
+##                   Kappa : 0.3464          
 ##  Mcnemar's Test P-Value : < 2.2e-16       
 ##                                           
-##             Sensitivity : 0.8676          
-##             Specificity : 0.4586          
-##          Pos Pred Value : 0.7234          
-##          Neg Pred Value : 0.6796          
+##             Sensitivity : 0.8670          
+##             Specificity : 0.4576          
+##          Pos Pred Value : 0.7229          
+##          Neg Pred Value : 0.6781          
 ##              Prevalence : 0.6201          
-##          Detection Rate : 0.5380          
+##          Detection Rate : 0.5376          
 ##    Detection Prevalence : 0.7437          
-##       Balanced Accuracy : 0.6631          
+##       Balanced Accuracy : 0.6623          
 ##                                           
 ##        'Positive' Class : FALSE           
 ## 
@@ -1195,35 +1221,35 @@ gbmFit1
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 5 times) 
 ## 
-## Summary of sample sizes: 3057, 3058, 3057, 3057, 3058, 3057, ... 
+## Summary of sample sizes: 3058, 3057, 3057, 3057, 3058, 3057, ... 
 ## 
 ## Resampling results across tuning parameters:
 ## 
 ##   interaction.depth  n.trees  Accuracy   Kappa      Accuracy SD
-##   1                   50      0.7809860  0.2667643  0.01543245 
-##   1                  100      0.7835194  0.2947529  0.01726870 
-##   1                  150      0.7868761  0.3226722  0.01890035 
-##   2                   50      0.7831680  0.2944744  0.01634164 
-##   2                  100      0.7876446  0.3303963  0.02001093 
-##   2                  150      0.7900602  0.3446239  0.01959239 
-##   3                   50      0.7871699  0.3153124  0.01755698 
-##   3                  100      0.7899995  0.3425376  0.01934792 
-##   3                  150      0.7893531  0.3470742  0.02020784 
+##   1                   50      0.7805712  0.2652597  0.01513192 
+##   1                  100      0.7842754  0.2972953  0.01577403 
+##   1                  150      0.7869860  0.3219509  0.01685567 
+##   2                   50      0.7841583  0.2961725  0.01489277 
+##   2                  100      0.7865147  0.3256234  0.01645296 
+##   2                  150      0.7887545  0.3389553  0.01639112 
+##   3                   50      0.7864559  0.3100377  0.01531675 
+##   3                  100      0.7881657  0.3344800  0.01784500 
+##   3                  150      0.7898737  0.3479997  0.01665758 
 ##   Kappa SD  
-##   0.05712023
-##   0.06122933
-##   0.06211007
-##   0.05825133
-##   0.06635932
-##   0.06497733
-##   0.05894426
-##   0.06417372
-##   0.06507891
+##   0.04884381
+##   0.05138280
+##   0.05417021
+##   0.04821259
+##   0.05212046
+##   0.05277783
+##   0.05149168
+##   0.05639715
+##   0.05187635
 ## 
 ## Tuning parameter 'shrinkage' was held constant at a value of 0.1
 ## Accuracy was used to select the optimal model using  the largest value.
 ## The final values used for the model were n.trees = 150,
-##  interaction.depth = 2 and shrinkage = 0.1.
+##  interaction.depth = 3 and shrinkage = 0.1.
 ```
 
 With gradient boosting and without much tuning (except for basic tuning that caret does for tree-sizes), we were able to reach 79% accuracy!! 
@@ -1256,30 +1282,30 @@ gbmFit2
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 5 times) 
 ## 
-## Summary of sample sizes: 5473, 5473, 5473, 5473, 5472, 5473, ... 
+## Summary of sample sizes: 5473, 5472, 5473, 5473, 5473, 5473, ... 
 ## 
 ## Resampling results across tuning parameters:
 ## 
 ##   interaction.depth  n.trees  Accuracy   Kappa      Accuracy SD
-##   1                   50      0.6939329  0.3076707  0.01674443 
-##   1                  100      0.7015960  0.3340968  0.01583775 
-##   1                  150      0.7026808  0.3406631  0.01701985 
-##   2                   50      0.7024501  0.3341046  0.01592806 
-##   2                  100      0.7078110  0.3497075  0.01691168 
-##   2                  150      0.7095545  0.3552288  0.01526964 
-##   3                   50      0.7040946  0.3401011  0.01771273 
-##   3                  100      0.7096860  0.3559886  0.01759340 
-##   3                  150      0.7110013  0.3601092  0.01502031 
+##   1                   50      0.6943260  0.3093264  0.01764772 
+##   1                  100      0.7002463  0.3312182  0.01743083 
+##   1                  150      0.7020221  0.3394830  0.01798011 
+##   2                   50      0.7019894  0.3324984  0.01562726 
+##   2                  100      0.7078441  0.3498098  0.01505381 
+##   2                  150      0.7088964  0.3529729  0.01571600 
+##   3                   50      0.7042267  0.3408652  0.01473097 
+##   3                  100      0.7084685  0.3534117  0.01598459 
+##   3                  150      0.7103099  0.3589227  0.01628204 
 ##   Kappa SD  
-##   0.03918811
-##   0.03633637
-##   0.03849170
-##   0.03693363
-##   0.03902886
-##   0.03543159
-##   0.04072799
-##   0.04069999
-##   0.03526463
+##   0.04175071
+##   0.03951837
+##   0.04052136
+##   0.03728253
+##   0.03505039
+##   0.03597610
+##   0.03390646
+##   0.03579581
+##   0.03613919
 ## 
 ## Tuning parameter 'shrinkage' was held constant at a value of 0.1
 ## Accuracy was used to select the optimal model using  the largest value.
