@@ -590,7 +590,7 @@ fitControl <- trainControl(## 10-fold CV
                            method = "repeatedcv",
                            number = 10,
                            ## repeated ten times
-                           repeats = 5)
+                           repeats = 10)
 
 
 #gbmFit1 <- train(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF,

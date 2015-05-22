@@ -215,8 +215,8 @@ subset.test.household  = subset(subset.household, !split)
 logit4 = glm(poor ~ ., subset.train.household, family=binomial)
 
 # takes a lot of time, not worth it
-# imputed.household = complete(mice(household[, povCols]))
-  imputed.household = household
+imputed.household = complete(mice(household[, povCols]))
+# imputed.household = household
 
 imputed.train.household = subset(imputed.household, split)
 imputed.test.household = subset(imputed.household, !split)

@@ -1231,7 +1231,7 @@ on the accuracy metric <code>1/n(TP + TN)</code></p>
                            method = &quot;repeatedcv&quot;,
                            number = 10,
                            ## repeated ten times
-                           repeats = 5)
+                           repeats = 10)
 
 
 #gbmFit1 &lt;- train(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF,
@@ -1268,37 +1268,37 @@ gbmFit1 &lt;- train(poor ~ TOILET + TV + GARBDISP + STOVE + HHMARST + HHEDLEV + 
 ##    2 classes: &#39;FALSE&#39;, &#39;TRUE&#39; 
 ## 
 ## No pre-processing
-## Resampling: Cross-Validated (10 fold, repeated 5 times) 
+## Resampling: Cross-Validated (10 fold, repeated 10 times) 
 ## 
 ## Summary of sample sizes: 3058, 3057, 3057, 3057, 3058, 3057, ... 
 ## 
 ## Resampling results across tuning parameters:
 ## 
 ##   interaction.depth  n.trees  Accuracy   Kappa      Accuracy SD
-##   1                   50      0.7805712  0.2652597  0.01513192 
-##   1                  100      0.7842754  0.2972953  0.01577403 
-##   1                  150      0.7869860  0.3219509  0.01685567 
-##   2                   50      0.7841583  0.2961725  0.01489277 
-##   2                  100      0.7865147  0.3256234  0.01645296 
-##   2                  150      0.7887545  0.3389553  0.01639112 
-##   3                   50      0.7864559  0.3100377  0.01531675 
-##   3                  100      0.7881657  0.3344800  0.01784500 
-##   3                  150      0.7898737  0.3479997  0.01665758 
+##   1                   50      0.7814225  0.2684218  0.01576830 
+##   1                  100      0.7836012  0.2956825  0.01596810 
+##   1                  150      0.7871343  0.3210756  0.01668403 
+##   2                   50      0.7840736  0.2961127  0.01715302 
+##   2                  100      0.7884873  0.3328421  0.01821905 
+##   2                  150      0.7888409  0.3395730  0.01788853 
+##   3                   50      0.7856020  0.3085551  0.01516988 
+##   3                  100      0.7883098  0.3361722  0.01650894 
+##   3                  150      0.7874564  0.3406035  0.01707315 
 ##   Kappa SD  
-##   0.04884381
-##   0.05138280
-##   0.05417021
-##   0.04821259
-##   0.05212046
-##   0.05277783
-##   0.05149168
-##   0.05639715
-##   0.05187635
+##   0.05435930
+##   0.05238222
+##   0.05503448
+##   0.05594150
+##   0.05690359
+##   0.05505005
+##   0.04977784
+##   0.05134779
+##   0.05477814
 ## 
 ## Tuning parameter &#39;shrinkage&#39; was held constant at a value of 0.1
 ## Accuracy was used to select the optimal model using  the largest value.
 ## The final values used for the model were n.trees = 150,
-##  interaction.depth = 3 and shrinkage = 0.1.
+##  interaction.depth = 2 and shrinkage = 0.1.
 </code></pre>
 
 <p>With gradient boosting and without much tuning (except for basic tuning that caret does for tree-sizes), we were able to reach 79% accuracy!! 
@@ -1326,32 +1326,32 @@ gbmFit2
 ##    2 classes: &#39;FALSE&#39;, &#39;TRUE&#39; 
 ## 
 ## No pre-processing
-## Resampling: Cross-Validated (10 fold, repeated 5 times) 
+## Resampling: Cross-Validated (10 fold, repeated 10 times) 
 ## 
-## Summary of sample sizes: 5473, 5472, 5473, 5473, 5473, 5473, ... 
+## Summary of sample sizes: 5473, 5473, 5472, 5473, 5473, 5473, ... 
 ## 
 ## Resampling results across tuning parameters:
 ## 
 ##   interaction.depth  n.trees  Accuracy   Kappa      Accuracy SD
-##   1                   50      0.6943260  0.3093264  0.01764772 
-##   1                  100      0.7002463  0.3312182  0.01743083 
-##   1                  150      0.7020221  0.3394830  0.01798011 
-##   2                   50      0.7019894  0.3324984  0.01562726 
-##   2                  100      0.7078441  0.3498098  0.01505381 
-##   2                  150      0.7088964  0.3529729  0.01571600 
-##   3                   50      0.7042267  0.3408652  0.01473097 
-##   3                  100      0.7084685  0.3534117  0.01598459 
-##   3                  150      0.7103099  0.3589227  0.01628204 
+##   1                   50      0.6946887  0.3098479  0.01711319 
+##   1                  100      0.7005595  0.3324524  0.01683297 
+##   1                  150      0.7014640  0.3378420  0.01655295 
+##   2                   50      0.7021872  0.3332488  0.01732069 
+##   2                  100      0.7077459  0.3491238  0.01645666 
+##   2                  150      0.7092256  0.3541038  0.01627077 
+##   3                   50      0.7045062  0.3411750  0.01709098 
+##   3                  100      0.7091764  0.3546715  0.01547030 
+##   3                  150      0.7106395  0.3596579  0.01625560 
 ##   Kappa SD  
-##   0.04175071
-##   0.03951837
-##   0.04052136
-##   0.03728253
-##   0.03505039
-##   0.03597610
-##   0.03390646
-##   0.03579581
-##   0.03613919
+##   0.03919879
+##   0.03767994
+##   0.03713248
+##   0.03895072
+##   0.03671343
+##   0.03655659
+##   0.03857274
+##   0.03514085
+##   0.03653856
 ## 
 ## Tuning parameter &#39;shrinkage&#39; was held constant at a value of 0.1
 ## Accuracy was used to select the optimal model using  the largest value.
