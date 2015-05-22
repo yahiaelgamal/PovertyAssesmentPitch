@@ -585,7 +585,7 @@ ggplot(extra.household, aes(x=LITRAT, fill=poorfac)) + geom_bar(binwidth=0.1) + 
 Let's build model with some of those variables. We'll use caret to do the cross validation and rely 
 on the accuracy metric `1/n(TP + TN)`
 
-```{r models_from_features}
+```{r models_from_features, warning=FALSE}
 fitControl <- trainControl(## 10-fold CV
                            method = "repeatedcv",
                            number = 10,
@@ -604,7 +604,26 @@ gbmFit1 <- train(poor ~ TOILET + TV + GARBDISP + STOVE + HHMARST + HHEDLEV + OWN
 gbmFit1
 ```
 
-With gradient boosting and without much tuning, we were able to reach 71% accuracy. Comparing this 
-with the performance of other datasets and algorithm here
+With gradient boosting and without much tuning (except for basic tuning that caret does for tree-sizes), we were able to reach 79% accuracy!! 
+Which is really good especially compared with the models we built earlier in this story (accuracy was in the 60s).
+Comparing this with the performance of other datasets and algorithm here.
 
 ![alt text](images/perf_other.png)
+
+Let's try another set of variables that we choose before but this time we'll do the same cross validation procedure.
+
+```{r another_model, warning=FALSE}
+gbmFit2 <- train(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF,
+                 data = train.extra.household,
+                 method = "gbm",
+                 trControl = fitControl,
+                 ## This last option is actually one
+                 ## for gbm() that passes through
+                 verbose = FALSE)
+gbmFit2
+```
+
+We got much lower accuracy. Making the selected variable ,from the basic feature analysis we did earlier, probable candidates
+for the final model. And even comparable with what's happening in the literature. Not to forget the additions that came
+from aggregating some data regarding the individuals of the each household and using them to predict the poverty of the household. Namely
+UND15RAT  + UND21RAT  + FEMRAT + LITRAT which had significant difference in our last model.

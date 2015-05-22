@@ -1020,10 +1020,34 @@ ggplot(extra.household, aes(x=TV, fill=poorfac)) + geom_bar(position='fill')
 ![plot of chunk feature_analysis](figure/feature_analysis-2.png) 
 
 ```r
-ggplot(extra.household, aes(x=GARBDISP, fill=poorfac)) + geom_bar(position='fill')
+ggplot(extra.household, aes(x=GARBDISP, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Grabage disposal')
 ```
 
 ![plot of chunk feature_analysis](figure/feature_analysis-3.png) 
+
+```r
+ggplot(extra.household, aes(x=SEWMACH, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Sewing machine')
+```
+
+![plot of chunk feature_analysis](figure/feature_analysis-4.png) 
+
+```r
+ggplot(extra.household, aes(x=WALLS, fill=poorfac)) + geom_bar(position='fill')
+```
+
+![plot of chunk feature_analysis](figure/feature_analysis-5.png) 
+
+```r
+ggplot(extra.household, aes(x=STOVE, fill=poorfac)) + geom_bar(position='fill')
+```
+
+![plot of chunk feature_analysis](figure/feature_analysis-6.png) 
+
+```r
+ggplot(extra.household, aes(x=RADIO, fill=poorfac)) + geom_bar(position='fill')
+```
+
+![plot of chunk feature_analysis](figure/feature_analysis-7.png) 
 There is an obvious relation between these variables and the likelihood of being poor. 
 Let's examine more household related variables
 
@@ -1132,7 +1156,8 @@ fitControl <- trainControl(## 10-fold CV
                            repeats = 5)
 
 
-gbmFit1 <- train(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF,
+#gbmFit1 <- train(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF,
+gbmFit1 <- train(poor ~ TOILET + TV + GARBDISP + STOVE + HHMARST + HHEDLEV + OWNHOUSE + UND15RAT  + UND21RAT  + FEMRAT +LITRAT,
                  data = train.extra.household,
                  method = "gbm",
                  trControl = fitControl,
@@ -1156,836 +1181,6 @@ gbmFit1 <- train(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + RO
 ## Loaded gbm 2.1.1
 ```
 
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0.333333333333333, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0.333333333333333, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0.333333333333333, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0.333333333333333, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0.333333333333333, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0.333333333333333, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0.333333333333333, 0, 0, 0.25,
-## : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0.333333333333333, 0, 0, 0.25,
-## : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0.333333333333333, 0, 0, 0.25,
-## : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0.333333333333333, 0, 0, :
-## variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0.333333333333333, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0.333333333333333, 0, 0, :
-## variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0.333333333333333, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0.333333333333333, 0, 0, :
-## variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0.333333333333333, 0, 0, :
-## variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 12: FLOOROther has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0.285714285714286, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0, 0, 0.25, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0, 0, 0.25, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0, 0, 0, 0, 0, 0.25, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
-```
-## Warning in gbm.fit(x = structure(c(0, 0.285714285714286, 0, 0, 0,
-## 0.333333333333333, : variable 27: ROOFMakeshift has no variation.
-```
-
 ```r
 gbmFit1
 ```
@@ -2000,33 +1195,99 @@ gbmFit1
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 5 times) 
 ## 
-## Summary of sample sizes: 5473, 5473, 5473, 5473, 5473, 5473, ... 
+## Summary of sample sizes: 3057, 3058, 3057, 3057, 3058, 3057, ... 
 ## 
 ## Resampling results across tuning parameters:
 ## 
 ##   interaction.depth  n.trees  Accuracy   Kappa      Accuracy SD
-##   1                   50      0.6938008  0.3073168  0.01373216 
-##   1                  100      0.6996218  0.3297064  0.01356582 
-##   1                  150      0.7020564  0.3388606  0.01295873 
-##   2                   50      0.7018257  0.3332303  0.01499356 
-##   2                  100      0.7075161  0.3487481  0.01517544 
-##   2                  150      0.7091606  0.3539367  0.01628158 
-##   3                   50      0.7051150  0.3424820  0.01587019 
-##   3                  100      0.7097197  0.3560864  0.01521238 
-##   3                  150      0.7111993  0.3611198  0.01490374 
+##   1                   50      0.7809860  0.2667643  0.01543245 
+##   1                  100      0.7835194  0.2947529  0.01726870 
+##   1                  150      0.7868761  0.3226722  0.01890035 
+##   2                   50      0.7831680  0.2944744  0.01634164 
+##   2                  100      0.7876446  0.3303963  0.02001093 
+##   2                  150      0.7900602  0.3446239  0.01959239 
+##   3                   50      0.7871699  0.3153124  0.01755698 
+##   3                  100      0.7899995  0.3425376  0.01934792 
+##   3                  150      0.7893531  0.3470742  0.02020784 
 ##   Kappa SD  
-##   0.03144167
-##   0.03030727
-##   0.02869959
-##   0.03401885
-##   0.03330379
-##   0.03689860
-##   0.03506607
-##   0.03427038
-##   0.03347028
+##   0.05712023
+##   0.06122933
+##   0.06211007
+##   0.05825133
+##   0.06635932
+##   0.06497733
+##   0.05894426
+##   0.06417372
+##   0.06507891
+## 
+## Tuning parameter 'shrinkage' was held constant at a value of 0.1
+## Accuracy was used to select the optimal model using  the largest value.
+## The final values used for the model were n.trees = 150,
+##  interaction.depth = 2 and shrinkage = 0.1.
+```
+
+With gradient boosting and without much tuning (except for basic tuning that caret does for tree-sizes), we were able to reach 79% accuracy!! 
+Which is really good especially compared with the models we built earlier in this story (accuracy was in the 60s).
+Comparing this with the performance of other datasets and algorithm here.
+
+![alt text](images/perf_other.png)
+
+Let's try another set of variables that we choose before but this time we'll do the same cross validation procedure.
+
+
+```r
+gbmFit2 <- train(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF,
+                 data = train.extra.household,
+                 method = "gbm",
+                 trControl = fitControl,
+                 ## This last option is actually one
+                 ## for gbm() that passes through
+                 verbose = FALSE)
+gbmFit2
+```
+
+```
+## Stochastic Gradient Boosting 
+## 
+## 6081 samples
+##  104 predictor
+##    2 classes: 'FALSE', 'TRUE' 
+## 
+## No pre-processing
+## Resampling: Cross-Validated (10 fold, repeated 5 times) 
+## 
+## Summary of sample sizes: 5473, 5473, 5473, 5473, 5472, 5473, ... 
+## 
+## Resampling results across tuning parameters:
+## 
+##   interaction.depth  n.trees  Accuracy   Kappa      Accuracy SD
+##   1                   50      0.6939329  0.3076707  0.01674443 
+##   1                  100      0.7015960  0.3340968  0.01583775 
+##   1                  150      0.7026808  0.3406631  0.01701985 
+##   2                   50      0.7024501  0.3341046  0.01592806 
+##   2                  100      0.7078110  0.3497075  0.01691168 
+##   2                  150      0.7095545  0.3552288  0.01526964 
+##   3                   50      0.7040946  0.3401011  0.01771273 
+##   3                  100      0.7096860  0.3559886  0.01759340 
+##   3                  150      0.7110013  0.3601092  0.01502031 
+##   Kappa SD  
+##   0.03918811
+##   0.03633637
+##   0.03849170
+##   0.03693363
+##   0.03902886
+##   0.03543159
+##   0.04072799
+##   0.04069999
+##   0.03526463
 ## 
 ## Tuning parameter 'shrinkage' was held constant at a value of 0.1
 ## Accuracy was used to select the optimal model using  the largest value.
 ## The final values used for the model were n.trees = 150,
 ##  interaction.depth = 3 and shrinkage = 0.1.
 ```
+
+We got much lower accuracy. Making the selected variable ,from the basic feature analysis we did earlier, probable candidates
+for the final model. And even comparable with what's happening in the literature. Not to forget the additions that came
+from aggregating some data regarding the individuals of the each household and using them to predict the poverty of the household. Namely
+UND15RAT  + UND21RAT  + FEMRAT + LITRAT which had significant difference in our last model.
