@@ -398,7 +398,7 @@ forest1.poor.prediction = predict(forest1, newdata=test.household)
 confusionMatrix(forest1.poor.prediction, test.household$poor)
 ```
 
-### Merging with Data from Another Table
+### Merging with Data from Another Table (Feature Augmentation)
 
 Because some features that might be useful aren't readily available from the household
 table like the ratio for household resident under a certain age, we will need to aggregate
@@ -436,10 +436,6 @@ forest2 = randomForest(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUS
 logit3 = glm(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.extra.household, family=binomial) 
 
 ```
-
-From now on, we will depend on the Balanced Accuracy measure `(Sensitivity+Specificity)/2` to 
-compare between models.
-
 ### Imputation Example and Dealing with Missing Data
 
 Some data is missing, but it is not much, (I investigated quickly offline)
@@ -483,10 +479,10 @@ confusionMatrix(svm3.predictions, test.extra.household$poor)
 
 
 ### Cross Validation and Tuning Example 
-library('gbm')
 In this example we'll make a tree model and tune it using caret library. Caret
 ( Classification and Regression Training) is the gold standard for tuning models
-in R. We'll play with a gbm model and an svm model.
+in R. We'll play with a gbm model and an svm model. (I commented the code because
+a better examples are in the Feature Analysis section).
 
 
 

@@ -345,7 +345,7 @@ tv_xpov + scale_x_continuous(limits=c(1,10))
 ```
 
 ```
-## Warning: Removed 1481 rows containing missing values (geom_point).
+## Warning: Removed 1487 rows containing missing values (geom_point).
 ```
 
 ![plot of chunk facet_by_tv_zoom](figure/facet_by_tv_zoom-1.png) 
@@ -727,31 +727,31 @@ confusionMatrix(forest1.poor.prediction, test.household$poor)
 ## 
 ##           Reference
 ## Prediction FALSE TRUE
-##      FALSE  1401  572
-##      TRUE    215  418
-##                                         
-##                Accuracy : 0.698         
-##                  95% CI : (0.68, 0.7156)
-##     No Information Rate : 0.6201        
-##     P-Value [Acc > NIR] : < 2.2e-16     
-##                                         
-##                   Kappa : 0.3109        
-##  Mcnemar's Test P-Value : < 2.2e-16     
-##                                         
-##             Sensitivity : 0.8670        
-##             Specificity : 0.4222        
-##          Pos Pred Value : 0.7101        
-##          Neg Pred Value : 0.6603        
-##              Prevalence : 0.6201        
-##          Detection Rate : 0.5376        
-##    Detection Prevalence : 0.7571        
-##       Balanced Accuracy : 0.6446        
-##                                         
-##        'Positive' Class : FALSE         
+##      FALSE  1404  571
+##      TRUE    212  419
+##                                           
+##                Accuracy : 0.6995          
+##                  95% CI : (0.6815, 0.7171)
+##     No Information Rate : 0.6201          
+##     P-Value [Acc > NIR] : < 2.2e-16       
+##                                           
+##                   Kappa : 0.3141          
+##  Mcnemar's Test P-Value : < 2.2e-16       
+##                                           
+##             Sensitivity : 0.8688          
+##             Specificity : 0.4232          
+##          Pos Pred Value : 0.7109          
+##          Neg Pred Value : 0.6640          
+##              Prevalence : 0.6201          
+##          Detection Rate : 0.5388          
+##    Detection Prevalence : 0.7579          
+##       Balanced Accuracy : 0.6460          
+##                                           
+##        'Positive' Class : FALSE           
 ## 
 ```
 
-### Merging with Data from Another Table
+### Merging with Data from Another Table (Feature Augmentation)
 
 Because some features that might be useful aren't readily available from the household
 table like the ratio for household resident under a certain age, we will need to aggregate
@@ -800,10 +800,6 @@ forest1 = randomForest(poor ~ WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, d
 forest2 = randomForest(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.extra.household) 
 logit3 = glm(poor ~ UND6RAT + FEMRAT + WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.extra.household, family=binomial) 
 ```
-
-From now on, we will depend on the Balanced Accuracy measure `(Sensitivity+Specificity)/2` to 
-compare between models.
-
 ### Imputation Example and Dealing with Missing Data
 
 Some data is missing, but it is not much, (I investigated quickly offline)
@@ -974,10 +970,10 @@ confusionMatrix(svm3.predictions, test.extra.household$poor)
 
 
 ### Cross Validation and Tuning Example 
-library('gbm')
 In this example we'll make a tree model and tune it using caret library. Caret
 ( Classification and Regression Training) is the gold standard for tuning models
-in R. We'll play with a gbm model and an svm model.
+in R. We'll play with a gbm model and an svm model. (I commented the code because
+a better examples are in the Feature Analysis section).
 
 
 
