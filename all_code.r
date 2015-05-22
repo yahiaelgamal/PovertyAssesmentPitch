@@ -132,6 +132,7 @@ rocplot(perf)
 as.numeric(performance(logit1.ROCRpred, 'auc')@y.values)
 
 # in helpers.R
+source('helpers.R')
 drawPrecisionRecall(logit1.ROCRpred)
 
 logit2 = glm(poor ~ WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.household, family=binomial) 
