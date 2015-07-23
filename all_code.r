@@ -84,7 +84,7 @@ levels(household$TV) = c('NOTV', 'TV')
 table(household$poor, household$TV)
 
 tv_xpov = ggplot(subset(household, !is.na(TV)), aes(y=TV, x=XPOV, col=TV)) +
-geom_point(alpha=0.5, position=position_jitter(0.05)) + geom_vline(xintercept=2.7, color='red')
+  geom_point(alpha=0.5, position=position_jitter(0.05)) + geom_vline(xintercept=2.7, color='red')
 tv_xpov
 
 tv_xpov + scale_x_continuous(limits=c(1,10)) 
@@ -215,15 +215,15 @@ subset.test.household  = subset(subset.household, !split)
 logit4 = glm(poor ~ ., subset.train.household, family=binomial)
 
 # takes a lot of time, not worth it
-imputed.household = complete(mice(household[, povCols]))
-# imputed.household = household
+# imputed.household = complete(mice(household[, povCols]))
+imputed.household = household
 
 imputed.train.household = subset(imputed.household, split)
 imputed.test.household = subset(imputed.household, !split)
 
-logit4 = glm(poor ~ ., imputed.train.household, family=binomial)
-logit4.poor.prediction = predict(logit4, imputed.test.household)
-table(prediction=logit4.poor.prediction > 0.4, reference = imputed.test.household$poor)
+#logit4 = glm(poor ~ ., imputed.train.household, family=binomial)
+#logit4.poor.prediction = predict(logit4, imputed.test.household)
+#table(prediction=logit4.poor.prediction > 0.4, reference = imputed.test.household$poor)
 
 library(kernlab)
 svm1 = ksvm(poor ~ WALLS + FLOOR + WATER + OWNHOUSE + ROOMS + ROOF, data=train.extra.household)
@@ -278,19 +278,19 @@ confusionMatrix(svm3.predictions, test.extra.household$poor)
 #                  trControl = fitControl)
 # logFit1
 
-ggplot(extra.household, aes(x=TOILET, fill=poorfac)) + geom_bar(position='fill')
-ggplot(extra.household, aes(x=TV, fill=poorfac)) + geom_bar(position='fill')
-ggplot(extra.household, aes(x=GARBDISP, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Grabage disposal')
-ggplot(extra.household, aes(x=SEWMACH, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Sewing machine')
-ggplot(extra.household, aes(x=WALLS, fill=poorfac)) + geom_bar(position='fill')
-ggplot(extra.household, aes(x=STOVE, fill=poorfac)) + geom_bar(position='fill')
-ggplot(extra.household, aes(x=RADIO, fill=poorfac)) + geom_bar(position='fill')
+ggplot(extra.household, aes(x=TOILET, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
+ggplot(extra.household, aes(x=TV, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
+ggplot(extra.household, aes(x=GARBDISP, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Grabage disposal') + coord_flip()
+ggplot(extra.household, aes(x=SEWMACH, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Sewing machine') + coord_flip()
+ggplot(extra.household, aes(x=WALLS, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
+ggplot(extra.household, aes(x=STOVE, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
+ggplot(extra.household, aes(x=RADIO, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
 
-ggplot(extra.household, aes(x=HHAGEY, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Age')
-ggplot(extra.household, aes(x=HHSEX, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Sex')
-ggplot(extra.household, aes(x=HHMARST, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Martial Status') + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-ggplot(extra.household, aes(x=HHEDLEV, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Ed level') + scale_x_discrete(labels= c('No Education', 'Pre school', 'Primary', 'Secondary', 'Upper secondary ', 'Post secondary (technical or vocational)', 'University', 'Literacy Program', 'Other', 'NA')) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-ggplot(extra.household, aes(x=OWNHOUSE, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Is the house owned')
+ggplot(extra.household, aes(x=HHAGEY, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Age') + coord_flip()
+ggplot(extra.household, aes(x=HHSEX, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Sex') + coord_flip()
+ggplot(extra.household, aes(x=HHMARST, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Martial Status') + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+ggplot(extra.household, aes(x=HHEDLEV, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Ed level') + scale_x_discrete(labels= c('No Education', 'Pre school', 'Primary', 'Secondary', 'Upper secondary ', 'Post secondary (technical or vocational)', 'University', 'Literacy Program', 'Other', 'NA')) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+ggplot(extra.household, aes(x=OWNHOUSE, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Is the house owned') + coord_flip()
 
 ggplot(extra.household, aes(x=UND6RAT, fill=poorfac)) + geom_bar(position='fill', binwidth=0.1) + labs(title ='Under 6 ratio') + scale_x_continuous(limits=c(0.0, 1.0))
 ggplot(extra.household, aes(x=UND15RAT, fill=poorfac)) + geom_bar(position='fill', binwidth=0.1) + labs(title = 'Under 15 ratio') + scale_x_continuous(limits=c(0.0, 1.0))

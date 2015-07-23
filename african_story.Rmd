@@ -116,7 +116,7 @@ library(ggplot2)
 library(scales)
 distPlot = ggplot(household, aes(x=XPOV, nrow=nrow(household), y=..count.. / nrow)) +
 geom_line(stat='bin', binwidth=0.1) + scale_y_continuous(labels = percent_format()) + 
-geom_vline(xintercept=2.0, color='red') + geom_vline(xintercept=1.25, color='blue')
+geom_vline(xintercept=2.0, color='red')
 
 distPlot + scale_x_continuous(limits=c(0, 20), breaks=0:20)  + labs(x='Gross Income in PPP $', y='% households')
 ```
@@ -142,8 +142,8 @@ if('PCEXPDR_PPP' %in% names(household)){ # for Ghana
 }
 
 distPlot = ggplot(household, aes(x=XPOV, nrow=nrow(household), y=..count.. / nrow)) +
-geom_line(stat='bin', binwidth=0.1) + scale_y_continuous(labels = percent_format()) + 
-geom_vline(xintercept=2.0, color='red') + geom_vline(xintercept=1.25, color='blue')
+  geom_line(stat='bin', binwidth=0.1) + scale_y_continuous(labels = percent_format()) + 
+  geom_vline(xintercept=2.0, color='red')
 distPlot + scale_x_continuous(limits=c(0, 20), breaks=0:20)  + labs(x='Total Expendtuires $', y='% households')
 ```
 
@@ -158,8 +158,7 @@ sum `cumsum`
 ```{r cumsum_dist, fig.width=12}
 distPlot + aes(y=cumsum(..count..)/nrow) + scale_x_continuous(limits=c(0, 20), breaks=0:20)  +
 labs(x='Gross Income in PPP $', y='Cumulative % of households') +
-geom_hline(yintercept=0.51, color='red') + 
-geom_hline(yintercept=0.28, color='blue')
+geom_hline(yintercept=0.51, color='red')
 ```
 
 Their percentage from the worldbank is 51% for Ghanda. It seems that expenditures 
@@ -452,8 +451,8 @@ subset.test.household  = subset(subset.household, !split)
 logit4 = glm(poor ~ ., subset.train.household, family=binomial)
 
 # takes a lot of time, not worth it
-imputed.household = complete(mice(household[, povCols]))
-# imputed.household = household
+# imputed.household = complete(mice(household[, povCols]))
+imputed.household = household
 
 imputed.train.household = subset(imputed.household, split)
 imputed.test.household = subset(imputed.household, !split)
@@ -537,23 +536,23 @@ Let's analyze a bit how some variables that we choose in our models relate to th
 likelihood of being poor.
 
 ```{r feature_analysis, fig.width=12}
-ggplot(extra.household, aes(x=TOILET, fill=poorfac)) + geom_bar(position='fill')
-ggplot(extra.household, aes(x=TV, fill=poorfac)) + geom_bar(position='fill')
-ggplot(extra.household, aes(x=GARBDISP, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Grabage disposal')
-ggplot(extra.household, aes(x=SEWMACH, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Sewing machine')
-ggplot(extra.household, aes(x=WALLS, fill=poorfac)) + geom_bar(position='fill')
-ggplot(extra.household, aes(x=STOVE, fill=poorfac)) + geom_bar(position='fill')
-ggplot(extra.household, aes(x=RADIO, fill=poorfac)) + geom_bar(position='fill')
+ggplot(extra.household, aes(x=TOILET, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
+ggplot(extra.household, aes(x=TV, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
+ggplot(extra.household, aes(x=GARBDISP, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Grabage disposal') + coord_flip()
+ggplot(extra.household, aes(x=SEWMACH, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Sewing machine') + coord_flip()
+ggplot(extra.household, aes(x=WALLS, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
+ggplot(extra.household, aes(x=STOVE, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
+ggplot(extra.household, aes(x=RADIO, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
 ```
 There is an obvious relation between these variables and the likelihood of being poor. 
 Let's examine more household related variables
 
 ```{r more_features, fig.width=12}
-ggplot(extra.household, aes(x=HHAGEY, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Age')
-ggplot(extra.household, aes(x=HHSEX, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Sex')
-ggplot(extra.household, aes(x=HHMARST, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Martial Status') + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-ggplot(extra.household, aes(x=HHEDLEV, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Ed level') + scale_x_discrete(labels= c('No Education', 'Pre school', 'Primary', 'Secondary', 'Upper secondary ', 'Post secondary (technical or vocational)', 'University', 'Literacy Program', 'Other', 'NA')) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-ggplot(extra.household, aes(x=OWNHOUSE, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Is the house owned')
+ggplot(extra.household, aes(x=HHAGEY, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Age') + coord_flip()
+ggplot(extra.household, aes(x=HHSEX, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Sex') + coord_flip()
+ggplot(extra.household, aes(x=HHMARST, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Martial Status') + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+ggplot(extra.household, aes(x=HHEDLEV, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Ed level') + scale_x_discrete(labels= c('No Education', 'Pre school', 'Primary', 'Secondary', 'Upper secondary ', 'Post secondary (technical or vocational)', 'University', 'Literacy Program', 'Other', 'NA')) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+ggplot(extra.household, aes(x=OWNHOUSE, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Is the house owned') + coord_flip()
 ```
 Something really strange in the OWNHOUSE graph. It is counterintuitive that if you own a house, it's more likely that you 
 are under the poverty line.

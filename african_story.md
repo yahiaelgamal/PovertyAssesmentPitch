@@ -116,7 +116,7 @@ library(ggplot2)
 library(scales)
 distPlot = ggplot(household, aes(x=XPOV, nrow=nrow(household), y=..count.. / nrow)) +
 geom_line(stat='bin', binwidth=0.1) + scale_y_continuous(labels = percent_format()) + 
-geom_vline(xintercept=2.0, color='red') + geom_vline(xintercept=1.25, color='blue')
+geom_vline(xintercept=2.0, color='red')
 
 distPlot + scale_x_continuous(limits=c(0, 20), breaks=0:20)  + labs(x='Gross Income in PPP $', y='% households')
 ```
@@ -153,8 +153,8 @@ if('PCEXPDR_PPP' %in% names(household)){ # for Ghana
 }
 
 distPlot = ggplot(household, aes(x=XPOV, nrow=nrow(household), y=..count.. / nrow)) +
-geom_line(stat='bin', binwidth=0.1) + scale_y_continuous(labels = percent_format()) + 
-geom_vline(xintercept=2.0, color='red') + geom_vline(xintercept=1.25, color='blue')
+  geom_line(stat='bin', binwidth=0.1) + scale_y_continuous(labels = percent_format()) + 
+  geom_vline(xintercept=2.0, color='red')
 distPlot + scale_x_continuous(limits=c(0, 20), breaks=0:20)  + labs(x='Total Expendtuires $', y='% households')
 ```
 
@@ -181,8 +181,7 @@ sum `cumsum`
 ```r
 distPlot + aes(y=cumsum(..count..)/nrow) + scale_x_continuous(limits=c(0, 20), breaks=0:20)  +
 labs(x='Gross Income in PPP $', y='Cumulative % of households') +
-geom_hline(yintercept=0.51, color='red') + 
-geom_hline(yintercept=0.28, color='blue')
+geom_hline(yintercept=0.51, color='red')
 ```
 
 ```
@@ -345,7 +344,7 @@ tv_xpov + scale_x_continuous(limits=c(1,10))
 ```
 
 ```
-## Warning: Removed 1487 rows containing missing values (geom_point).
+## Warning: Removed 1484 rows containing missing values (geom_point).
 ```
 
 ![plot of chunk facet_by_tv_zoom](figure/facet_by_tv_zoom-1.png) 
@@ -817,46 +816,20 @@ subset.test.household  = subset(subset.household, !split)
 logit4 = glm(poor ~ ., subset.train.household, family=binomial)
 
 # takes a lot of time, not worth it
-imputed.household = complete(mice(household[, povCols]))
-```
-
-```
-## 
-##  iter imp variable
-##   1   1  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   1   2  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   1   3  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   1   4  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   1   5  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   2   1  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   2   2  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   2   3  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   2   4  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   2   5  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   3   1  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   3   2  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   3   3  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   3   4  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   3   5  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   4   1  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   4   2  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   4   3  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   4   4  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   4   5  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   5   1  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   5   2  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   5   3  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   5   4  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-##   5   5  HHEDLEV  SEWMACH  STOVE  RADIO  TV  AGLAND  OTHLNDOW
-```
-
-```r
-# imputed.household = household
+# imputed.household = complete(mice(household[, povCols]))
+imputed.household = household
 
 imputed.train.household = subset(imputed.household, split)
 imputed.test.household = subset(imputed.household, !split)
 
 logit4 = glm(poor ~ ., imputed.train.household, family=binomial)
+```
+
+```
+## Error in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels
+```
+
+```r
 logit4.poor.prediction = predict(logit4, imputed.test.household)
 table(prediction=logit4.poor.prediction > 0.4, reference = imputed.test.household$poor)
 ```
@@ -864,8 +837,8 @@ table(prediction=logit4.poor.prediction > 0.4, reference = imputed.test.househol
 ```
 ##           reference
 ## prediction FALSE TRUE
-##      FALSE  1496  635
-##      TRUE    120  355
+##      FALSE   705  377
+##      TRUE    119  350
 ```
 
 #### SVM model
@@ -944,25 +917,25 @@ confusionMatrix(svm3.predictions, test.extra.household$poor)
 ## 
 ##           Reference
 ## Prediction FALSE TRUE
-##      FALSE  1401  537
-##      TRUE    215  453
+##      FALSE  1396  538
+##      TRUE    220  452
 ##                                           
-##                Accuracy : 0.7114          
-##                  95% CI : (0.6936, 0.7288)
+##                Accuracy : 0.7091          
+##                  95% CI : (0.6913, 0.7265)
 ##     No Information Rate : 0.6201          
 ##     P-Value [Acc > NIR] : < 2.2e-16       
 ##                                           
-##                   Kappa : 0.3464          
+##                   Kappa : 0.3417          
 ##  Mcnemar's Test P-Value : < 2.2e-16       
 ##                                           
-##             Sensitivity : 0.8670          
-##             Specificity : 0.4576          
-##          Pos Pred Value : 0.7229          
-##          Neg Pred Value : 0.6781          
+##             Sensitivity : 0.8639          
+##             Specificity : 0.4566          
+##          Pos Pred Value : 0.7218          
+##          Neg Pred Value : 0.6726          
 ##              Prevalence : 0.6201          
-##          Detection Rate : 0.5376          
-##    Detection Prevalence : 0.7437          
-##       Balanced Accuracy : 0.6623          
+##          Detection Rate : 0.5357          
+##    Detection Prevalence : 0.7421          
+##       Balanced Accuracy : 0.6602          
 ##                                           
 ##        'Positive' Class : FALSE           
 ## 
@@ -1030,43 +1003,43 @@ likelihood of being poor.
 
 
 ```r
-ggplot(extra.household, aes(x=TOILET, fill=poorfac)) + geom_bar(position='fill')
+ggplot(extra.household, aes(x=TOILET, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
 ```
 
 ![plot of chunk feature_analysis](figure/feature_analysis-1.png) 
 
 ```r
-ggplot(extra.household, aes(x=TV, fill=poorfac)) + geom_bar(position='fill')
+ggplot(extra.household, aes(x=TV, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
 ```
 
 ![plot of chunk feature_analysis](figure/feature_analysis-2.png) 
 
 ```r
-ggplot(extra.household, aes(x=GARBDISP, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Grabage disposal')
+ggplot(extra.household, aes(x=GARBDISP, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Grabage disposal') + coord_flip()
 ```
 
 ![plot of chunk feature_analysis](figure/feature_analysis-3.png) 
 
 ```r
-ggplot(extra.household, aes(x=SEWMACH, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Sewing machine')
+ggplot(extra.household, aes(x=SEWMACH, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Sewing machine') + coord_flip()
 ```
 
 ![plot of chunk feature_analysis](figure/feature_analysis-4.png) 
 
 ```r
-ggplot(extra.household, aes(x=WALLS, fill=poorfac)) + geom_bar(position='fill')
+ggplot(extra.household, aes(x=WALLS, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
 ```
 
 ![plot of chunk feature_analysis](figure/feature_analysis-5.png) 
 
 ```r
-ggplot(extra.household, aes(x=STOVE, fill=poorfac)) + geom_bar(position='fill')
+ggplot(extra.household, aes(x=STOVE, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
 ```
 
 ![plot of chunk feature_analysis](figure/feature_analysis-6.png) 
 
 ```r
-ggplot(extra.household, aes(x=RADIO, fill=poorfac)) + geom_bar(position='fill')
+ggplot(extra.household, aes(x=RADIO, fill=poorfac)) + geom_bar(position='fill') + coord_flip()
 ```
 
 ![plot of chunk feature_analysis](figure/feature_analysis-7.png) 
@@ -1075,7 +1048,7 @@ Let's examine more household related variables
 
 
 ```r
-ggplot(extra.household, aes(x=HHAGEY, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Age')
+ggplot(extra.household, aes(x=HHAGEY, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Age') + coord_flip()
 ```
 
 ```
@@ -1085,25 +1058,25 @@ ggplot(extra.household, aes(x=HHAGEY, fill=poorfac)) + geom_bar(position='fill')
 ![plot of chunk more_features](figure/more_features-1.png) 
 
 ```r
-ggplot(extra.household, aes(x=HHSEX, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Sex')
+ggplot(extra.household, aes(x=HHSEX, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Sex') + coord_flip()
 ```
 
 ![plot of chunk more_features](figure/more_features-2.png) 
 
 ```r
-ggplot(extra.household, aes(x=HHMARST, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Martial Status') + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggplot(extra.household, aes(x=HHMARST, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Martial Status') + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 ![plot of chunk more_features](figure/more_features-3.png) 
 
 ```r
-ggplot(extra.household, aes(x=HHEDLEV, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Ed level') + scale_x_discrete(labels= c('No Education', 'Pre school', 'Primary', 'Secondary', 'Upper secondary ', 'Post secondary (technical or vocational)', 'University', 'Literacy Program', 'Other', 'NA')) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggplot(extra.household, aes(x=HHEDLEV, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Household Head Ed level') + scale_x_discrete(labels= c('No Education', 'Pre school', 'Primary', 'Secondary', 'Upper secondary ', 'Post secondary (technical or vocational)', 'University', 'Literacy Program', 'Other', 'NA')) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 ![plot of chunk more_features](figure/more_features-4.png) 
 
 ```r
-ggplot(extra.household, aes(x=OWNHOUSE, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Is the house owned')
+ggplot(extra.household, aes(x=OWNHOUSE, fill=poorfac)) + geom_bar(position='fill') + ggtitle('Is the house owned') + coord_flip()
 ```
 
 ![plot of chunk more_features](figure/more_features-5.png) 
@@ -1217,30 +1190,30 @@ gbmFit1
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
 ## 
-## Summary of sample sizes: 3058, 3057, 3057, 3057, 3058, 3057, ... 
+## Summary of sample sizes: 3057, 3057, 3058, 3057, 3057, 3057, ... 
 ## 
 ## Resampling results across tuning parameters:
 ## 
 ##   interaction.depth  n.trees  Accuracy   Kappa      Accuracy SD
-##   1                   50      0.7814225  0.2684218  0.01576830 
-##   1                  100      0.7836012  0.2956825  0.01596810 
-##   1                  150      0.7871343  0.3210756  0.01668403 
-##   2                   50      0.7840736  0.2961127  0.01715302 
-##   2                  100      0.7884873  0.3328421  0.01821905 
-##   2                  150      0.7888409  0.3395730  0.01788853 
-##   3                   50      0.7856020  0.3085551  0.01516988 
-##   3                  100      0.7883098  0.3361722  0.01650894 
-##   3                  150      0.7874564  0.3406035  0.01707315 
+##   1                   50      0.7808933  0.2662902  0.01358714 
+##   1                  100      0.7860464  0.3033677  0.01462076 
+##   1                  150      0.7873119  0.3225967  0.01447358 
+##   2                   50      0.7847225  0.2988119  0.01427295 
+##   2                  100      0.7891357  0.3343929  0.01430812 
+##   2                  150      0.7893712  0.3414205  0.01543545 
+##   3                   50      0.7868998  0.3114794  0.01495831 
+##   3                  100      0.7881355  0.3351624  0.01507768 
+##   3                  150      0.7870474  0.3382147  0.01572868 
 ##   Kappa SD  
-##   0.05435930
-##   0.05238222
-##   0.05503448
-##   0.05594150
-##   0.05690359
-##   0.05505005
-##   0.04977784
-##   0.05134779
-##   0.05477814
+##   0.05388886
+##   0.05358377
+##   0.05143455
+##   0.05306729
+##   0.05058441
+##   0.05224141
+##   0.05512640
+##   0.05306251
+##   0.05438589
 ## 
 ## Tuning parameter 'shrinkage' was held constant at a value of 0.1
 ## Accuracy was used to select the optimal model using  the largest value.
@@ -1278,30 +1251,30 @@ gbmFit2
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold, repeated 10 times) 
 ## 
-## Summary of sample sizes: 5473, 5473, 5472, 5473, 5473, 5473, ... 
+## Summary of sample sizes: 5473, 5472, 5473, 5473, 5473, 5473, ... 
 ## 
 ## Resampling results across tuning parameters:
 ## 
 ##   interaction.depth  n.trees  Accuracy   Kappa      Accuracy SD
-##   1                   50      0.6946887  0.3098479  0.01711319 
-##   1                  100      0.7005595  0.3324524  0.01683297 
-##   1                  150      0.7014640  0.3378420  0.01655295 
-##   2                   50      0.7021872  0.3332488  0.01732069 
-##   2                  100      0.7077459  0.3491238  0.01645666 
-##   2                  150      0.7092256  0.3541038  0.01627077 
-##   3                   50      0.7045062  0.3411750  0.01709098 
-##   3                  100      0.7091764  0.3546715  0.01547030 
-##   3                  150      0.7106395  0.3596579  0.01625560 
+##   1                   50      0.6942132  0.3083537  0.01795626 
+##   1                  100      0.7002974  0.3315723  0.01865515 
+##   1                  150      0.7032080  0.3416662  0.01953760 
+##   2                   50      0.7016296  0.3323030  0.01851439 
+##   2                  100      0.7083549  0.3511137  0.01840383 
+##   2                  150      0.7089310  0.3538746  0.01878544 
+##   3                   50      0.7043097  0.3407625  0.01794083 
+##   3                  100      0.7094243  0.3551364  0.01825492 
+##   3                  150      0.7103122  0.3586861  0.01770997 
 ##   Kappa SD  
-##   0.03919879
-##   0.03767994
-##   0.03713248
-##   0.03895072
-##   0.03671343
-##   0.03655659
-##   0.03857274
-##   0.03514085
-##   0.03653856
+##   0.04094641
+##   0.04179732
+##   0.04312107
+##   0.04192737
+##   0.04164841
+##   0.04241851
+##   0.03979541
+##   0.04055468
+##   0.03986472
 ## 
 ## Tuning parameter 'shrinkage' was held constant at a value of 0.1
 ## Accuracy was used to select the optimal model using  the largest value.
