@@ -196,17 +196,14 @@ values are shifted from the world bank income for ghana.
 value).
 So let's choose the number that will make the world bank's 51% fit our graph. I will hack 
 this part very quickly. It seems from the graph that the 51% is around 3.5, assuming that
-the extreme poverty line will be moved by the same factor (2.5/3.5) `1.75`, so the blue
-line will be move to 1.25 * 1.75 `2.18`
+the extreme poverty line will be moved by the same factor (2.5/3.5) `1.75`.
 
 
 ```r
 # VISUAL ROUGH CALCULATION (just multiplied the hlines by a factor)
 distPlot + aes(y=cumsum(..count..)/nrow) + scale_x_continuous(limits=c(0, 20), breaks=0:20)  +
 labs(x='Gross Income in PPP $', y='Cumulative % of households') +
-geom_hline(yintercept=0.51, color='red') + 
-geom_hline(yintercept=0.28, color='blue') + 
-geom_vline(xintercept=3.5, color='red') + geom_vline(xintercept=2.18, color='blue')
+geom_vline(xintercept=3.5, color='red') + geom_hline(yintercept=0.51, color='red')
 ```
 
 ```
