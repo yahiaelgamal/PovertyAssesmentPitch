@@ -371,9 +371,7 @@ geom_hline(yintercept=0.51, color=&#39;red&#39;)
 values are shifted from the world bank income for ghana. 
 (I read somewhere that expenditures are mainly used for ranking, so it&#39;s a ranking preserving 
 value).
-So let&#39;s choose the number that will make the world bank&#39;s 51% fit our graph. I will hack 
-this part very quickly. It seems from the graph that the 51% is around 3.5, assuming that
-the extreme poverty line will be moved by the same factor (2.5/3.5) <code>1.75</code>.</p>
+So let&#39;s choose the number that will make the world bank&#39;s 51% fit our graph. I will hack </p>
 
 <pre><code class="r"># VISUAL ROUGH CALCULATION (just multiplied the hlines by a factor)
 distPlot + aes(y=cumsum(..count..)/nrow) + scale_x_continuous(limits=c(0, 20), breaks=0:20)  +
@@ -914,23 +912,18 @@ logit4 = glm(poor ~ ., subset.train.household, family=binomial)
 # imputed.household = complete(mice(household[, povCols]))
 imputed.household = household
 
-imputed.train.household = subset(imputed.household, split)
-imputed.test.household = subset(imputed.household, !split)
-
-logit4 = glm(poor ~ ., imputed.train.household, family=binomial)
-</code></pre>
-
-<pre><code>## Error in `contrasts&lt;-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels
-</code></pre>
-
-<pre><code class="r">logit4.poor.prediction = predict(logit4, imputed.test.household)
+# imputed.train.household = subset(imputed.household, split)
+# imputed.test.household = subset(imputed.household, !split)
+# 
+# logit4 = glm(poor ~ ., imputed.train.household, family=binomial)
+# logit4.poor.prediction = predict(logit4, imputed.test.household)
 table(prediction=logit4.poor.prediction &gt; 0.4, reference = imputed.test.household$poor)
 </code></pre>
 
 <pre><code>##           reference
 ## prediction FALSE TRUE
-##      FALSE   705  377
-##      TRUE    119  350
+##      FALSE   455  173
+##      TRUE    369  554
 </code></pre>
 
 <h4>SVM model</h4>

@@ -195,8 +195,6 @@ values are shifted from the world bank income for ghana.
 (I read somewhere that expenditures are mainly used for ranking, so it's a ranking preserving 
 value).
 So let's choose the number that will make the world bank's 51% fit our graph. I will hack 
-this part very quickly. It seems from the graph that the 51% is around 3.5, assuming that
-the extreme poverty line will be moved by the same factor (2.5/3.5) `1.75`.
 
 
 ```r
@@ -816,26 +814,19 @@ logit4 = glm(poor ~ ., subset.train.household, family=binomial)
 # imputed.household = complete(mice(household[, povCols]))
 imputed.household = household
 
-imputed.train.household = subset(imputed.household, split)
-imputed.test.household = subset(imputed.household, !split)
-
-logit4 = glm(poor ~ ., imputed.train.household, family=binomial)
-```
-
-```
-## Error in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels
-```
-
-```r
-logit4.poor.prediction = predict(logit4, imputed.test.household)
+# imputed.train.household = subset(imputed.household, split)
+# imputed.test.household = subset(imputed.household, !split)
+# 
+# logit4 = glm(poor ~ ., imputed.train.household, family=binomial)
+# logit4.poor.prediction = predict(logit4, imputed.test.household)
 table(prediction=logit4.poor.prediction > 0.4, reference = imputed.test.household$poor)
 ```
 
 ```
 ##           reference
 ## prediction FALSE TRUE
-##      FALSE   705  377
-##      TRUE    119  350
+##      FALSE   455  173
+##      TRUE    369  554
 ```
 
 #### SVM model
